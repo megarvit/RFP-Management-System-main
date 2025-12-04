@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard'
 import RFPList from './pages/RFPList'
 import CreateRFP from './pages/CreateRFP'
 import RFPDetails from './pages/RFPDetails'
+import VendorList from "./pages/VendorList"
+import CreateVendor from "./pages/CreateVendor"
 
 
 export default function App(){
@@ -15,18 +17,21 @@ return (
 <div className="space-x-4">
 <Link to="/">Dashboard</Link>
 <Link to="/rfps">RFPs</Link>
+<Link to="/vendors">Vendors</Link>
 </div>
 </nav>
 
 
 <main className="p-6">
-<Routes>
-<Route path="/" element={<Dashboard />} />
-<Route path="/login" element={<Login />} />
-<Route path="/rfps" element={<RFPList />} />
-<Route path="/rfps/create" element={<CreateRFP />} />
-<Route path="/rfps/:id" element={<RFPDetails />} />
-</Routes>
+    <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/rfps" element={<RFPList />} />
+        <Route path="/rfps/create" element={<CreateRFP />} />
+        <Route path="/rfps/:id" element={<RFPDetails />} />
+        <Route path="/vendors" element={<VendorList />} />
+        <Route path="/vendors/create" element={<CreateVendor />} />
+    </Routes>
 </main>
 </div>
 )

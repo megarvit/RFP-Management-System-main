@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import rfpRoutes from "./routes/rfpRoutes.js";
 import dotenv from "dotenv";
+import vendorRoutes from "./routes/vendorRoutes.js";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ mongoose.connection.on("error", (err) => {
 });
 
 app.use("/api/rfp", rfpRoutes);
+app.use("/api/vendor", vendorRoutes);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Backend running on port ${process.env.PORT || 5000}`);
