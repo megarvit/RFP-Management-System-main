@@ -1,4 +1,5 @@
 import RFP from "../models/RFP.js";
+import RFPVendorMapping from "../models/RFPVendorMapping.js";
 
 // CREATE RFP
 export const createRFP = async (req, res) => {
@@ -13,21 +14,42 @@ export const createRFP = async (req, res) => {
   }
 };
 
-// LIST ALL RFPs
+// LIST ALL RFPs + INCLUDE ASSIGNED VENDOR NAME
 export const getAllRFPs = async (req, res) => {
   try {
     const rfps = await RFP.find().sort({ createdAt: -1 });
-    res.json({ success: true, data: rfps });
+
+    // fetch all mappings
+    const mappings = await RFPVendorMapping.find().populate("vendorId");
+
+    // create a lookup table: rfpId -> vendor name
+    const assigned = {};
+    mappings.forEach(m => {
+      assigned[m.rfpId.toString()] = m.vendorId?.name || null;
+    });
+
+    // inject assigned vendor into RFP list
+    const finalData = rfps.map(r => ({
+      ...r._doc,
+      assignedVendor: assigned[r._id.toString()] || null
+    }));
+
+    res.json({ success: true, data: finalData });
   } catch (err) {
     console.error("Get RFPs error:", err);
     res.status(500).json({ success: false, message: "Error fetching RFP list" });
   }
 };
 
-// DELETE RFP
+// DELETE RFP + DELETE MAPPING
 export const deleteRFP = async (req, res) => {
   try {
     const id = req.params.id;
+
+    // delete mapping for this RFP
+    await RFPVendorMapping.deleteMany({ rfpId: id });
+
+    // delete RFP
     await RFP.findByIdAndDelete(id);
 
     res.json({ success: true, message: "RFP deleted" });
@@ -37,12 +59,22 @@ export const deleteRFP = async (req, res) => {
   }
 };
 
-// FETCH RFP BY ID
+// FETCH RFP BY ID + ASSIGNED VENDOR DETAILS
 export const getRFPById = async (req, res) => {
   try {
     const rfp = await RFP.findById(req.params.id);
     if (!rfp) return res.status(404).json({ success: false, message: "RFP not found" });
-    res.json({ success: true, data: rfp });
+
+    const mapping = await RFPVendorMapping.findOne({ rfpId: req.params.id })
+      .populate("vendorId");
+
+    res.json({
+      success: true,
+      data: {
+        ...rfp._doc,
+        assignedVendor: mapping?.vendorId || null
+      }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Server error" });

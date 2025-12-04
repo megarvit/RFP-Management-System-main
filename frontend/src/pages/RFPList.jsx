@@ -13,7 +13,9 @@ export default function RFPList() {
     async function fetchRFPs() {
         try {
             const res = await api.get('/rfp')
-            setRfps(res.data.data || res.data)
+
+            // Backend returns { success: true, data: [...] }
+            setRfps(res.data.data || [])
         } catch (err) {
             console.error(err)
             alert('Failed to fetch RFPs')
@@ -54,12 +56,23 @@ export default function RFPList() {
                     >
                         <div>
                             <div className="font-semibold text-lg">{r.title}</div>
+
                             <div className="text-sm text-gray-600">{r.description}</div>
+
+                            {/* Assigned Vendor Section */}
+                            <div className="text-sm mt-2">
+                                <span className="font-semibold">Assigned Vendor:</span>{" "}
+                                {r.assignedVendor ? (
+                                    <span className="text-green-700">{r.assignedVendor}</span>
+                                ) : (
+                                    <span className="text-red-500">Not Assigned Yet</span>
+                                )}
+                            </div>
                         </div>
 
                         <button
                             onClick={(e) => {
-                                e.stopPropagation() // prevents navigating when clicking delete
+                                e.stopPropagation()
                                 deleteRFP(r._id)
                             }}
                             className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"

@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 
-const rfpSchema = new mongoose.Schema(
+const RFPSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
+    title: String,
     description: String,
-    budget: { type: Number, default: 0 },
+    budget: Number,
     delivery: String,
-    created_by: { type: Number, default: 1 },
-    status: { type: String, default: "draft" },
+    created_by: Number,
+    assignedVendor: { type: String, default: null }
   },
   { timestamps: true }
 );
 
-export default mongoose.model("RFP", rfpSchema);
+export default mongoose.model("RFP", RFPSchema);

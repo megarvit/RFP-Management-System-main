@@ -1,84 +1,54 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/api";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function SendRFP() {
   const [rfps, setRfps] = useState([]);
   const [vendors, setVendors] = useState([]);
-  const [selectedRFP, setSelectedRFP] = useState("");
+  const [selectedRfp, setSelectedRfp] = useState("");
   const [selectedVendor, setSelectedVendor] = useState("");
-
-  const fetchData = async () => {
-    const rfpRes = await api.get("/rfp");
-    setRfps(rfpRes.data.data);
-
-    const vendorRes = await api.get("/vendor");
-    setVendors(vendorRes.data.data);
-  };
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     fetchData();
+    // optionally preselect rfp if passed via Link state
+    if(location.state?.rfpId) setSelectedRfp(location.state.rfpId);
   }, []);
 
-  const handleSend = async () => {
-    if (!selectedRFP || !selectedVendor) {
-      alert("Select RFP and Vendor");
-      return;
-    }
-
+  async function fetchData() {
     try {
-      const res = await api.post("/send-rfp", {
-        rfpId: selectedRFP,
-        vendorId: selectedVendor,
-      });
-      alert("RFP sent to vendor!");
+      const r = await api.get("/rfp");
+      setRfps(r.data.data || []);
+      const v = await api.get("/vendor");
+      setVendors(v.data.data || []);
+    } catch (err) { console.error(err); alert("Failed to load data"); }
+  }
+
+  async function handleSend() {
+    if(!selectedRfp || !selectedVendor) { alert("Choose both"); return; }
+    try {
+      const res = await api.post("/send-rfp", { rfpId: selectedRfp, vendorId: selectedVendor });
+      if(res.data.success) { alert("Assigned successfully"); navigate("/rfps"); }
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || "Failed to send RFP");
+      alert(err.response?.data?.message || "Failed to assign RFP");
     }
-  };
+  }
 
   return (
     <div className="max-w-lg mx-auto p-4 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Send RFP to Vendor</h2>
+      <h2 className="text-xl font-bold mb-4">Assign Vendor to RFP</h2>
+      <select value={selectedRfp} onChange={e=>setSelectedRfp(e.target.value)} className="w-full p-2 border rounded mb-3">
+        <option value="">-- Select RFP --</option>
+        {rfps.map(r => <option key={r._id} value={r._id}>{r.title}</option>)}
+      </select>
 
-      <div className="mb-4">
-        <label className="block font-semibold mb-1">Select RFP</label>
-        <select
-          value={selectedRFP}
-          onChange={(e) => setSelectedRFP(e.target.value)}
-          className="w-full border rounded p-2"
-        >
-          <option value="">-- Select RFP --</option>
-          {rfps.map((r) => (
-            <option key={r._id} value={r._id}>
-              {r.title}
-            </option>
-          ))}
-        </select>
-      </div>
+      <select value={selectedVendor} onChange={e=>setSelectedVendor(e.target.value)} className="w-full p-2 border rounded mb-3">
+        <option value="">-- Select Vendor --</option>
+        {vendors.map(v => <option key={v._id} value={v._id}>{v.name}</option>)}
+      </select>
 
-      <div className="mb-4">
-        <label className="block font-semibold mb-1">Select Vendor</label>
-        <select
-          value={selectedVendor}
-          onChange={(e) => setSelectedVendor(e.target.value)}
-          className="w-full border rounded p-2"
-        >
-          <option value="">-- Select Vendor --</option>
-          {vendors.map((v) => (
-            <option key={v._id} value={v._id}>
-              {v.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <button
-        onClick={handleSend}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Send RFP
-      </button>
+      <button onClick={handleSend} className="bg-blue-600 text-white px-4 py-2 rounded">Assign</button>
     </div>
   );
 }
