@@ -4,6 +4,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import RFPList from './pages/RFPList'
 import CreateRFP from './pages/CreateRFP'
+import RFPDetails from './pages/RFPDetails'
 
 
 export default function App(){
@@ -24,6 +25,7 @@ return (
 <Route path="/login" element={<Login />} />
 <Route path="/rfps" element={<RFPList />} />
 <Route path="/rfps/create" element={<CreateRFP />} />
+<Route path="/rfps/:id" element={<RFPDetails />} />
 </Routes>
 </main>
 </div>

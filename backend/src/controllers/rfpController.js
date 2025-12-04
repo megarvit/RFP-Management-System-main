@@ -36,3 +36,15 @@ export const deleteRFP = async (req, res) => {
     res.status(500).json({ success: false, message: "Error deleting RFP" });
   }
 };
+
+// FETCH RFP BY ID
+export const getRFPById = async (req, res) => {
+  try {
+    const rfp = await RFP.findById(req.params.id);
+    if (!rfp) return res.status(404).json({ success: false, message: "RFP not found" });
+    res.json({ success: true, data: rfp });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

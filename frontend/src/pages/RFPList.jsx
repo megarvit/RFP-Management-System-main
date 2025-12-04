@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import api from '../api/api'
-import { Link } from 'react-router-dom'
 
 export default function RFPList() {
     const [rfps, setRfps] = useState([])
+    const navigate = useNavigate()
 
     useEffect(() => {
         fetchRFPs()
@@ -48,7 +49,8 @@ export default function RFPList() {
                 {rfps.map(r => (
                     <div
                         key={r._id}
-                        className="bg-white p-4 rounded shadow flex justify-between items-center hover:shadow-lg transition-shadow duration-200"
+                        className="bg-white p-4 rounded shadow flex justify-between items-center hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+                        onClick={() => navigate(`/rfps/${r._id}`)}
                     >
                         <div>
                             <div className="font-semibold text-lg">{r.title}</div>
@@ -56,7 +58,10 @@ export default function RFPList() {
                         </div>
 
                         <button
-                            onClick={() => deleteRFP(r._id)}
+                            onClick={(e) => {
+                                e.stopPropagation() // prevents navigating when clicking delete
+                                deleteRFP(r._id)
+                            }}
                             className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
                         >
                             Delete
