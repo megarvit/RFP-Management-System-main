@@ -1,28 +1,14 @@
-import { pool } from "../db.js";
+import RFP from "../models/RFP.js";
 
 // CREATE RFP
 export const createRFP = async (req, res) => {
   try {
-    const { title, description, created_by } = req.body;
+    const rfp = new RFP(req.body);
+    const saved = await rfp.save();
 
-    // Validate required fields
-    if (!title || !created_by) {
-      return res.status(400).json({
-        success: false,
-        message: "Title and created_by are required",
-      });
-    }
-
-    const result = await pool.query(
-      `INSERT INTO rfp (title, description, created_by, created_at, updated_at)
-       VALUES ($1, $2, $3, NOW(), NOW())
-       RETURNING *`,
-      [title, description || null, created_by]
-    );
-
-    res.status(201).json({ success: true, data: result.rows[0] });
+    res.json({ success: true, data: saved });
   } catch (err) {
-    console.error("Create RFP error:", err.message);
+    console.error("Create RFP error:", err);
     res.status(500).json({ success: false, message: "Error creating RFP" });
   }
 };
@@ -30,31 +16,23 @@ export const createRFP = async (req, res) => {
 // LIST ALL RFPs
 export const getAllRFPs = async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM rfp ORDER BY id DESC");
-    res.json({ success: true, data: result.rows });
+    const rfps = await RFP.find().sort({ createdAt: -1 });
+    res.json({ success: true, data: rfps });
   } catch (err) {
-    console.error("Get RFPs error:", err.message);
+    console.error("Get RFPs error:", err);
     res.status(500).json({ success: false, message: "Error fetching RFP list" });
   }
 };
 
-// DELETE RFP by ID
+// DELETE RFP
 export const deleteRFP = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
+    await RFP.findByIdAndDelete(id);
 
-    const result = await pool.query(
-      "DELETE FROM rfp WHERE id = $1 RETURNING *",
-      [id]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ success: false, message: "RFP not found" });
-    }
-
-    res.json({ success: true, message: "RFP deleted successfully", data: result.rows[0] });
+    res.json({ success: true, message: "RFP deleted" });
   } catch (err) {
-    console.error("Delete RFP error:", err);
+    console.error("Delete error:", err);
     res.status(500).json({ success: false, message: "Error deleting RFP" });
   }
 };

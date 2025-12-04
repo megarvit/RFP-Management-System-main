@@ -1,22 +1,41 @@
+// import express from "express";
+// import cors from "cors";
+// import { config } from "dotenv";
+// import rfpRoutes from "./routes/rfpRoutes.js";
+
+// config();
+// const app = express();
+
+// app.use(cors());
+// app.use(express.json());
+
+// // Routes
+// app.use("/api/rfp", rfpRoutes);
+
+// app.get("/", (req, res) => {
+//   res.send("Backend is running!");
+// });
+
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => {
+//   console.log("Backend running on port", PORT);
+// });
+
 import express from "express";
 import cors from "cors";
-import { config } from "dotenv";
+import dotenv from "dotenv";
+import { connectDB } from "./config/mongo.js";
 import rfpRoutes from "./routes/rfpRoutes.js";
 
-config();
-const app = express();
+dotenv.config();
 
+const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
+connectDB();
+
 app.use("/api/rfp", rfpRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Backend is running!");
-});
+app.listen(5000, () => console.log("Backend running on port 5000"));
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log("Backend running on port", PORT);
-});

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CreateRFP = () => {
   const [title, setTitle] = useState("");
@@ -7,6 +8,8 @@ const CreateRFP = () => {
   const [delivery, setDelivery] = useState("");
   const [createdBy, setCreatedBy] = useState(1); // default user id
   const [response, setResponse] = useState(null);
+
+  const navigate = useNavigate(); //  useNavigate hook
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,6 +34,11 @@ const CreateRFP = () => {
       const data = await res.json();
       setResponse(data);
       console.log(data);
+
+      if (data.success) {
+        //  redirect to RFP list page
+        navigate("/rfps");
+      }
     } catch (err) {
       console.error("Error creating RFP:", err);
     }
