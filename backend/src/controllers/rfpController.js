@@ -1,5 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
 import RFP from "../models/RFP.js";
 import RFPVendorMapping from "../models/RFPVendorMapping.js";
 import Groq from "groq-sdk";
