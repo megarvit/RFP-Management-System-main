@@ -9,7 +9,7 @@ const ProposalScoring = () => {
 
   // Fetch all RFPs
   useEffect(() => {
-    axios.get("http://localhost:5000/api/rfp")
+    axios.get(`${import.meta.env.VITE_API_URL}/rfp`)
       .then(res => setRfps(res.data.data))
       .catch(err => console.error(err));
   }, []);
@@ -37,7 +37,7 @@ const ProposalScoring = () => {
 
   const assignRfp = (vendor) => {
     // Call API to assign RFP to vendor
-    axios.post("http://localhost:5000/api/send-rfp/send", {
+    axios.post(`${import.meta.env.VITE_API_URL}/send-rfp/send`, {
       rfpId: selectedRfp._id,
       vendorIds: [vendor.vendorId || 1] // Replace dummy vendorId with real one
     })
