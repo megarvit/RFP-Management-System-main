@@ -19,7 +19,7 @@ const CreateRFP = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(${import.meta.env.VITE_API_URL}/rfp/create-ai, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/rfp/create-ai`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
