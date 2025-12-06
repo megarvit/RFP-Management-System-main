@@ -6,49 +6,118 @@ export default function SendRFP() {
   const [rfps, setRfps] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [selectedRfp, setSelectedRfp] = useState("");
-  const [selectedVendor, setSelectedVendor] = useState("");
+  const [selectedVendors, setSelectedVendors] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     fetchData();
-    // optionally preselect rfp if passed via Link state
-    if(location.state?.rfpId) setSelectedRfp(location.state.rfpId);
+    if (location.state?.rfpId) setSelectedRfp(location.state.rfpId);
   }, []);
 
   async function fetchData() {
     try {
       const r = await api.get("/rfp");
-      setRfps(r.data.data || []);
       const v = await api.get("/vendor");
+      setRfps(r.data.data || []);
       setVendors(v.data.data || []);
-    } catch (err) { console.error(err); alert("Failed to load data"); }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to load data");
+    }
+  }
+
+  function toggleVendor(id) {
+    if (selectedVendors.includes(id)) {
+      setSelectedVendors(selectedVendors.filter(v => v !== id));
+    } else {
+      setSelectedVendors([...selectedVendors, id]);
+    }
+  }
+
+  function toggleSelectAll() {
+    if (!selectAll) {
+      setSelectedVendors(vendors.map(v => v._id)); 
+    } else {
+      setSelectedVendors([]);
+    }
+    setSelectAll(!selectAll);
   }
 
   async function handleSend() {
-    if(!selectedRfp || !selectedVendor) { alert("Choose both"); return; }
+    if (!selectedRfp || selectedVendors.length === 0) {
+      alert("Please choose RFP and at least one vendor");
+      return;
+    }
+
     try {
-      const res = await api.post("/send-rfp", { rfpId: selectedRfp, vendorId: selectedVendor });
-      if(res.data.success) { alert("Assigned successfully"); navigate("/rfps"); }
+      const res = await api.post("/send-rfp", {
+        rfpId: selectedRfp,
+        vendorIds: selectedVendors
+      });
+
+      if (res.data.success) {
+        alert("RFP sent to vendors");
+        navigate("/rfps");
+      }
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to assign RFP");
+      alert(err.response?.data?.message || "Failed to send RFP");
     }
   }
 
   return (
     <div className="max-w-lg mx-auto p-4 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Assign Vendor to RFP</h2>
-      <select value={selectedRfp} onChange={e=>setSelectedRfp(e.target.value)} className="w-full p-2 border rounded mb-3">
+      <h2 className="text-xl font-bold mb-4">Send RFP to Vendors</h2>
+
+      {/* RFP Select */}
+      <select
+        value={selectedRfp}
+        onChange={(e) => setSelectedRfp(e.target.value)}
+        className="w-full p-2 border rounded mb-4"
+      >
         <option value="">-- Select RFP --</option>
-        {rfps.map(r => <option key={r._id} value={r._id}>{r.title}</option>)}
+        {rfps.map((r) => (
+          <option key={r._id} value={r._id}>
+            {r.title}
+          </option>
+        ))}
       </select>
 
-      <select value={selectedVendor} onChange={e=>setSelectedVendor(e.target.value)} className="w-full p-2 border rounded mb-3">
-        <option value="">-- Select Vendor --</option>
-        {vendors.map(v => <option key={v._id} value={v._id}>{v.name}</option>)}
-      </select>
+      {/* Vendors List */}
+      {vendors.length > 0 && (
+        <div className="border p-3 rounded mb-4">
+          <div className="flex items-center mb-2">
+            <input
+              type="checkbox"
+              checked={selectAll}
+              onChange={toggleSelectAll}
+              className="mr-2"
+            />
+            <label className="font-semibold">Select All Vendors</label>
+          </div>
 
-      <button onClick={handleSend} className="bg-blue-600 text-white px-4 py-2 rounded">Assign</button>
+          {vendors.map((v) => (
+            <div key={v._id} className="flex items-center py-1">
+              <input
+                type="checkbox"
+                checked={selectedVendors.includes(v._id)}
+                onChange={() => toggleVendor(v._id)}
+                className="mr-2"
+              />
+              <span>{v.name}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <button
+        onClick={handleSend}
+        className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+      >
+        Send RFP
+      </button>
     </div>
   );
 }

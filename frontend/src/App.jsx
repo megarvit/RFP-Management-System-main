@@ -8,6 +8,7 @@ import RFPDetails from './pages/RFPDetails'
 import VendorList from "./pages/VendorList"
 import CreateVendor from "./pages/CreateVendor"
 import SendRFP from "./pages/SendRFP";
+import ProposalScoring from "./pages/proposalScoring";
 
 
 export default function App(){
@@ -18,8 +19,9 @@ return (
 <div className="space-x-4">
 <Link to="/">Dashboard</Link>
 <Link to="/rfps">RFPs</Link>
-<Link to="/rfps/send">Send RFP</Link>
+<Link to="/rfps/send">Mail</Link>
 <Link to="/vendors">Vendors</Link>
+<Link to="/proposals">Proposals</Link>
 </div>
 </nav>
 
@@ -34,6 +36,7 @@ return (
         <Route path="/vendors" element={<VendorList />} />
         <Route path="/vendors/create" element={<CreateVendor />} />
         <Route path="/rfps/send" element={<SendRFP />} />
+        <Route path="/proposals" element={<ProposalScoring />} />
     </Routes>
 </main>
 </div>
