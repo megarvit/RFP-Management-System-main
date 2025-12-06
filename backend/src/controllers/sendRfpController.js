@@ -23,7 +23,22 @@ export const sendRFPToVendor = async (req, res) => {
         sendMail({
           to: v.email,
           subject: `New RFP: ${rfp.title}`,
-          text: `Hello ${v.name},\n\nYou have received a new RFP: ${rfp.title}\n\n${rfp.description}\n\nThank you.`,
+
+          text: `Hello ${v.name},
+        You have received a new RFP: ${rfp.title}.
+        Description: ${rfp.description}`,
+
+          html: `
+            <div style="font-family: Arial, sans-serif;">
+              <h2>New RFP Received</h2>
+              <p>Hello <strong>${v.name}</strong>,</p>
+              <p>You have received a new RFP:</p>
+              <p><strong>${rfp.title}</strong></p>
+              <p>${rfp.description}</p>
+              <br />
+              <p>Thank you,<br/>RFP Management Team</p>
+            </div>
+          `,
         })
       )
     );

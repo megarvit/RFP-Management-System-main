@@ -15,7 +15,7 @@ export default function App(){
 return (
 <div className="min-h-screen bg-gray-100">
 <nav className="bg-white shadow p-4 flex justify-between">
-<div className="font-bold">AI-RFP</div>
+<div className="font-bold">AutoRFP</div>
 <div className="space-x-4">
 <Link to="/">Dashboard</Link>
 <Link to="/rfps">RFPs</Link>
