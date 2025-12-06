@@ -23,6 +23,48 @@ export const getAllVendors = async (req, res) => {
   }
 };
 
+// GET VENDOR BY ID
+export const getVendorById = async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.params.id);
+
+    if (!vendor) {
+      return res.status(404).json({
+        success: false,
+        message: "Vendor not found",
+      });
+    }
+
+    res.json({ success: true, data: vendor });
+  } catch (err) {
+    console.error("Get Vendor By ID error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Invalid Vendor ID",
+    });
+  }
+};
+
+//UPDATE VENDOR
+export const updateVendor = async (req, res) => {
+  try {
+    const vendor = await Vendor.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    if (!vendor) {
+      return res.status(404).json({ success: false, message: "Vendor not found" });
+    }
+
+    res.json({ success: true, data: vendor });
+  } catch (err) {
+    console.error("Update Vendor error:", err);
+    res.status(500).json({ success: false, message: "Error updating vendor" });
+  }
+};
+
 // DELETE VENDOR
 export const deleteVendor = async (req, res) => {
   try {

@@ -13,8 +13,6 @@ export default function RFPList() {
     async function fetchRFPs() {
         try {
             const res = await api.get('/rfp')
-
-            // Backend returns { success: true, data: [...] }
             setRfps(res.data.data || [])
         } catch (err) {
             console.error(err)
@@ -56,29 +54,53 @@ export default function RFPList() {
                     >
                         <div>
                             <div className="font-semibold text-lg">{r.title}</div>
+                            <div className="text-sm text-gray-600">{r.specification}</div>
 
-                            <div className="text-sm text-gray-600">{r.description}</div>
-
-                            {/* Assigned Vendor Section */}
+                            {/* Assigned Vendors Section */}
                             <div className="text-sm mt-2">
-                                <span className="font-semibold">Assigned Vendor:</span>{" "}
-                                {r.assignedVendor ? (
-                                    <span className="text-green-700">{r.assignedVendor}</span>
+                                <span className="font-semibold">Assigned Vendors:</span>{" "}
+                                {r.assignedVendor && r.assignedVendor.length > 0 ? (
+                                    Array.isArray(r.assignedVendor)
+                                        ? r.assignedVendor.map(v => v.name || v).join(", ")
+                                        : r.assignedVendor.name || r.assignedVendor
                                 ) : (
                                     <span className="text-red-500">Not Assigned Yet</span>
                                 )}
                             </div>
                         </div>
 
-                        <button
-                            onClick={(e) => {
+                        {/* Action Buttons */}
+                        <div className="flex gap-2">
+                            <button
+                                onClick={(e) => {
                                 e.stopPropagation()
-                                deleteRFP(r._id)
-                            }}
-                            className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                        >
-                            Delete
-                        </button>
+                                navigate(`/rfps/${r._id}`)
+                                }}
+                                className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                            >
+                                View
+                            </button>
+
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    navigate(`/rfps/update/${r._id}`)
+                                }}
+                                className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                            >
+                                Update
+                            </button>
+
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    deleteRFP(r._id)
+                                }}
+                                className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>

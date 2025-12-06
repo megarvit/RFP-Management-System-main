@@ -1,12 +1,12 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import rfpRoutes from "./routes/rfpRoutes.js";
-import dotenv from "dotenv";
 import vendorRoutes from "./routes/vendorRoutes.js";
 import sendRfpRoutes from "./routes/sendRfpRoutes.js";
 
-dotenv.config();
 
 const app = express();
 app.use(cors());

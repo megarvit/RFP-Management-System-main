@@ -9,17 +9,20 @@ import VendorList from "./pages/VendorList"
 import CreateVendor from "./pages/CreateVendor"
 import SendRFP from "./pages/SendRFP";
 import ProposalScoring from "./pages/proposalScoring";
+import UpdateRFP from './pages/UpdateRFP';
+import VendorDetails from "./pages/VendorDetails";
+import VendorEdit from "./pages/VendorEdit";
 
 
 export default function App(){
 return (
 <div className="min-h-screen bg-gray-100">
 <nav className="bg-white shadow p-4 flex justify-between">
-<div className="font-bold">AI-RFP</div>
+<div className="font-bold">AutoRFP</div>
 <div className="space-x-4">
 <Link to="/">Dashboard</Link>
 <Link to="/rfps">RFPs</Link>
-<Link to="/rfps/send">Mail</Link>
+<Link to="/rfps/send">Send RFP </Link>
 <Link to="/vendors">Vendors</Link>
 <Link to="/proposals">Proposals</Link>
 </div>
@@ -37,6 +40,10 @@ return (
         <Route path="/vendors/create" element={<CreateVendor />} />
         <Route path="/rfps/send" element={<SendRFP />} />
         <Route path="/proposals" element={<ProposalScoring />} />
+        <Route path="/rfps/update/:id" element={<UpdateRFP />} />
+        <Route path="/send-rfp/:rfpId" element={<SendRFP />} />
+        <Route path="/vendors/:id" element={<VendorDetails />} />
+        <Route path="/vendors/edit/:id" element={<VendorEdit />} />
     </Routes>
 </main>
 </div>

@@ -12,11 +12,12 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-export async function sendMail({ to, subject, html }) {
+export async function sendMail({ to, subject, text, html }) {
     return transporter.sendMail({
         from: `"AI RFP System" <${process.env.EMAIL_USER}>`,
         to,
         subject,
+        text,
         html,
     });
 }

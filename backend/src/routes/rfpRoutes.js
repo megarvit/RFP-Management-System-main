@@ -7,5 +7,7 @@ router.post("/create", rfpController.createRFP);
 router.get("/", rfpController.getAllRFPs);
 router.delete("/:id", rfpController.deleteRFP);
 router.get("/:id", rfpController.getRFPById);
+router.post("/create-ai", rfpController.createRFPWithAI);
+router.put('/:id', rfpController.updateRFP);
 
 export default router;
