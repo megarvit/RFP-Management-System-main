@@ -1,66 +1,21 @@
 import mongoose from "mongoose";
 
-const ItemSchema = new mongoose.Schema(
-  {
-    item: {
-      type: String,
-      required: true,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-      min: 1,
-    },
-  },
-  { _id: false }
-);
+const ItemSchema = new mongoose.Schema({
+  item: String,
+  quantity: Number,
+});
 
 const RFPSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: true,
-    },
-
-    specification: {
-      type: String,
-      required: true,
-    },
-
-    items: {
-      type: [ItemSchema], // array of items
-      default: [],
-    },
-
-    warranty: {
-      type: String,
-      default: null,
-    },
-
-    paymentTerms: {
-      type: String,
-      default: null,
-    },
-
-    budget: {
-      type: Number,
-      default: 0,
-    },
-
-    delivery: {
-      type: String,
-      default: null,
-    },
-
-    created_by: {
-      type: Number,
-      required: true,
-    },
-
-    assignedVendor: {
-      type: String,
-      default: null,
-    },
+    title: String,
+    specification: String,
+    items: [ItemSchema],
+    warranty: String,
+    paymentTerms: String,
+    budget: Number,
+    delivery: String,
+    created_by: Number,
+    assignedVendor: { type: [String], default: [] }
   },
   { timestamps: true }
 );

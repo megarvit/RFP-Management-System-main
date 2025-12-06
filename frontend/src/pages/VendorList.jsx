@@ -4,6 +4,7 @@ import api from "../api/api";
 
 export default function VendorList() {
   const [vendors, setVendors] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchVendors();
@@ -12,10 +13,12 @@ export default function VendorList() {
   const fetchVendors = async () => {
     try {
       const res = await api.get("/vendor");
-      setVendors(res.data.data || res.data);
+      setVendors(res.data.data || res.data || []);
     } catch (err) {
       console.error(err);
       alert("Failed to fetch vendors");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -33,6 +36,7 @@ export default function VendorList() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
+      {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Vendors</h2>
         <Link
@@ -43,24 +47,45 @@ export default function VendorList() {
         </Link>
       </div>
 
+      {/* Vendor List */}
       <div className="grid gap-3">
-        {vendors.length === 0 && <div>No vendors yet</div>}
+        {loading && <div>Loading vendors...</div>}
+        {!loading && vendors.length === 0 && <div>No vendors yet</div>}
 
         {vendors.map((v) => (
           <div
             key={v._id}
             className="bg-white p-4 rounded shadow flex justify-between items-center hover:shadow-lg transition-shadow duration-200"
           >
+            {/* Vendor Info */}
             <div>
               <div className="font-semibold text-lg">{v.name}</div>
               <div className="text-sm text-gray-600">{v.email}</div>
             </div>
-            <button
-              onClick={() => deleteVendor(v._id)}
-              className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-            >
-              Delete
-            </button>
+
+            {/* Actions */}
+            <div className="flex gap-2">
+              <Link
+                to={`/vendors/${v._id}`}
+                className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+              >
+                View
+              </Link>
+
+              <Link
+                to={`/vendors/edit/${v._id}`}
+                className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+              >
+                Edit
+              </Link>
+
+              <button
+                onClick={() => deleteVendor(v._id)}
+                className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))}
       </div>
